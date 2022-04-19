@@ -1,0 +1,359 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 92,
+   "id": "bd774142",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: BeautifulSoup4 in c:\\programdata\\anaconda3\\lib\\site-packages (4.10.0)\n",
+      "Requirement already satisfied: soupsieve>1.2 in c:\\programdata\\anaconda3\\lib\\site-packages (from BeautifulSoup4) (2.2.1)\n",
+      "Note: you may need to restart the kernel to use updated packages.\n"
+     ]
+    }
+   ],
+   "source": [
+    "pip install BeautifulSoup4"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 93,
+   "id": "84b7254a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: requests in c:\\programdata\\anaconda3\\lib\\site-packages (2.26.0)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in c:\\programdata\\anaconda3\\lib\\site-packages (from requests) (3.2)\n",
+      "Requirement already satisfied: urllib3<1.27,>=1.21.1 in c:\\programdata\\anaconda3\\lib\\site-packages (from requests) (1.26.7)\n",
+      "Requirement already satisfied: charset-normalizer~=2.0.0 in c:\\programdata\\anaconda3\\lib\\site-packages (from requests) (2.0.4)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in c:\\programdata\\anaconda3\\lib\\site-packages (from requests) (2021.10.8)\n",
+      "Note: you may need to restart the kernel to use updated packages.\n"
+     ]
+    }
+   ],
+   "source": [
+    "pip install requests"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "id": "f0d7afe2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: html5lib in c:\\programdata\\anaconda3\\lib\\site-packages (1.1)\n",
+      "Requirement already satisfied: six>=1.9 in c:\\programdata\\anaconda3\\lib\\site-packages (from html5lib) (1.16.0)\n",
+      "Requirement already satisfied: webencodings in c:\\programdata\\anaconda3\\lib\\site-packages (from html5lib) (0.5.1)\n",
+      "Note: you may need to restart the kernel to use updated packages.\n"
+     ]
+    }
+   ],
+   "source": [
+    "pip install html5lib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 95,
+   "id": "f06a76ad",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import requests \n",
+    "from bs4 import BeautifulSoup"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 96,
+   "id": "6d200a43",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 97,
+   "id": "010768f0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#the url is from Nigeria property centre\n",
+    "req = requests.get (\"https://www.propertypro.ng/property-for-rent/in/imo\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 98,
+   "id": "fc301ccc",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "200\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(req.status_code)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 99,
+   "id": "1c382d49",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "soup_req = BeautifulSoup(req.content, \"html5lib\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 100,
+   "id": "0722d48d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "date_listed = soup_req.find_all('h5','/assets/assets/img/resultpage/03a0a19c8a1e23ef8d78f6130eb0aa22-watch-icon.png')\n",
+    "title = soup_req.find_all('h3', 'listings-property-title2')\n",
+    "location = soup_req.find_all ('h4', \"single-room-text\")\n",
+    "price = soup_req.find_all('h3',\"listings-price\" )\n",
+    "description = ('div', \"result-list-details\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 102,
+   "id": "64cfd9c7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "date_listedloop = [dates_listed.text for dates_listed in date_listed]\n",
+    "titleloop = [titles.text for titles in title]\n",
+    "locationloop = [locations.text for locations in location]\n",
+    "priceloop = [prices.text for prices in price]\n",
+    "description = [descriptions.text for descriptions in description]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6bcb5a3f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#testing the code above \n",
+    "print (locationloop)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7cae2a39",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    " data = {\n",
+    "       'date_listed': date_listedloop,\n",
+    "       'title' : titleloop,\n",
+    "       'location': locationloop,\n",
+    "       'price': priceloop,\n",
+    "       'description': descriptionloop\n",
+    " }\n",
+    "df = pd.DataFrame(data, columns=[\n",
+    "    'date_listed',\n",
+    "    'title',\n",
+    "    'location',\n",
+    "    'description'\n",
+    "])\n",
+    "print(df)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "664123f0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data = {\n",
+    "    'date_listed': date_listedloop,\n",
+    "    'tite' : titleloop,\n",
+    "    'location': locationloop,\n",
+    "    'price':priceloop,\n",
+    "    'description ': descriptionloop\n",
+    "        \n",
+    "        \n",
+    "    \n",
+    "}\n",
+    "#checking the length of our variable to know if they could be merged togther in one data frame \n",
+    "print(len(date_listedloop))\n",
+    "print(len(titleloop))\n",
+    "print(len(locationloop))\n",
+    "print(len(priceloop))\n",
+    "print(len(descriptionloop))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "id": "6f509e1e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "             date_listed                                 title  \\\n",
+      "0        Added Yesterday   1 bedroom flat / apartment for rent   \n",
+      "1        Added Yesterday  Self contain (single rooms) for rent   \n",
+      "2   Added on 31 Mar 2022  Self contain (single rooms) for rent   \n",
+      "3   Added on 30 Mar 2022    5 bedroom detached duplex for rent   \n",
+      "4   Added on 28 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "5   Added on 28 Mar 2022    5 bedroom detached duplex for rent   \n",
+      "6   Added on 28 Mar 2022  Self contain (single rooms) for rent   \n",
+      "7   Added on 28 Mar 2022                 Office space for rent   \n",
+      "8   Added on 28 Mar 2022   2 bedroom flat / apartment for rent   \n",
+      "9   Added on 28 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "10  Added on 28 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "11  Added on 27 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "12  Added on 27 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "13  Added on 27 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "14  Added on 27 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "15  Added on 27 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "16  Added on 23 Mar 2022   3 bedroom flat / apartment for rent   \n",
+      "17  Added on 17 Apr 2021    4 bedroom terraced duplex for rent   \n",
+      "18  Added on 26 Oct 2021          Commercial property for rent   \n",
+      "19  Added on 24 Feb 2022                    Warehouse for rent   \n",
+      "\n",
+      "                                             location  \\\n",
+      "0     Republic Estate, Independence Layout, Enugu,...   \n",
+      "1                        Onuiyi Nsukka, Nsukka, Enugu   \n",
+      "2                  New Haven, New Haven, Enugu, Enugu   \n",
+      "3     Corporative Boulevard By Dhamija, Trans Ekul...   \n",
+      "4                Ugboezeji, Abakpa Nike, Enugu, Enugu   \n",
+      "5                   Diamond Estate, GRA, Enugu, Enugu   \n",
+      "6                   Independence Layout, Enugu, Enugu   \n",
+      "7     Enugu/abakaliki Express Road, GRA, Enugu, Enugu   \n",
+      "8                       Thinkers Corner, Enugu, Enugu   \n",
+      "9                Ugboezeji, Abakpa Nike, Enugu, Enugu   \n",
+      "10                       Premier Layout, Enugu, Enugu   \n",
+      "11    Spar Independence Layout, Independence Layou...   \n",
+      "12            Gra Around 9mobile Office, Enugu, Enugu   \n",
+      "13    Agric Bank Axis Independence Layout, Enugu, ...   \n",
+      "14                           New Heaven, Enugu, Enugu   \n",
+      "15                Sunrise Estate, Emene, Enugu, Enugu   \n",
+      "16                        Goshen Estate, Enugu, Enugu   \n",
+      "17                Nwazota Crescent, GRA, Enugu, Enugu   \n",
+      "18    Airport Road By Peace Factory Bustop, Emene,...   \n",
+      "19    Peace Factory Bustop By Airport Road, Emene,...   \n",
+      "\n",
+      "                       price  \n",
+      "0      \\n₦500,000 per annum   \n",
+      "1      \\n₦180,000 per annum   \n",
+      "2      \\n₦200,000 per annum   \n",
+      "3    \\n₦2,000,000 per annum   \n",
+      "4      \\n₦800,000 per annum   \n",
+      "5    \\n₦3,500,000 per annum   \n",
+      "6      \\n₦800,000 per annum   \n",
+      "7      \\n₦700,000 per annum   \n",
+      "8      \\n₦850,000 per annum   \n",
+      "9      \\n₦300,000 per annum   \n",
+      "10     \\n₦750,000 per annum   \n",
+      "11     \\n₦700,000 per annum   \n",
+      "12     \\n₦600,000 per annum   \n",
+      "13     \\n₦600,000 per annum   \n",
+      "14     \\n₦500,000 per annum   \n",
+      "15     \\n₦500,000 per annum   \n",
+      "16     \\n₦500,000 per annum   \n",
+      "17   \\n₦1,500,000 per annum   \n",
+      "18   \\n₦2,500,000 per annum   \n",
+      "19  \\n₦10,000,000 per annum   \n"
+     ]
+    }
+   ],
+   "source": [
+    "df2 = pd.DataFrame(data, columns = ['price'])\n",
+    "orignal_price = df2['price']\n",
+    "df = df.join(orignal_price)\n",
+    "print(df)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "5f6ca9ab",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "to_csv = df.to_csv(r'C:/Users/user/Desktop/housing_df.csv', index = False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f6e9973d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "    \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b7c02112",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c3887fb8",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
